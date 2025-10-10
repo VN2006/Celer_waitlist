@@ -3,6 +3,12 @@ import { writeFile, readFile, mkdir } from "fs/promises";
 import { existsSync } from "fs";
 import path from "path";
 
+interface EmailEntry {
+  email: string;
+  timestamp: string;
+  ip: string;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { email } = await request.json();
@@ -27,7 +33,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Read existing emails
-    let emails = [];
+    let emails: EmailEntry[] = [];
     try {
       if (existsSync(emailsFile)) {
         const fileContent = await readFile(emailsFile, 'utf8');
@@ -38,7 +44,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Add new email with timestamp
-    const newEntry = {
+    const newEntry: EmailEntry = {
       email,
       timestamp: new Date().toISOString(),
       ip: request.ip || request.headers.get('x-forwarded-for') || 'unknown'
