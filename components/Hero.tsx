@@ -13,9 +13,15 @@ export default function Hero() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.1 }}
-          className="text-5xl md:text-7xl font-extrabold text-textPrimary mb-6 leading-tight"
+          className="text-5xl md:text-7xl font-extrabold mb-6 leading-tight"
         >
-          Celer — The world's first end-to-end multiomics copilot.
+          <span className="bg-gradient-to-r from-white via-purple-200 to-white bg-clip-text text-transparent">
+            Celer
+          </span>
+          <span className="text-textPrimary"> — </span>
+          <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+            The world's first end-to-end multiomics copilot.
+          </span>
         </motion.h1>
         <motion.p
           initial={{ opacity: 0, y: 30 }}

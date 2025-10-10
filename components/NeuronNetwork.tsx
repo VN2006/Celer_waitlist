@@ -114,15 +114,15 @@ function NetworkScene() {
 
   const neurons = useMemo(() => {
     const positions: [number, number, number][] = [];
-    const radius = 3;
+    const radius = 5;
 
     for (let i = 0; i < NEURON_COUNT; i++) {
       const phi = Math.acos(-1 + (2 * i) / NEURON_COUNT);
       const theta = Math.sqrt(NEURON_COUNT * Math.PI) * phi;
 
-      const x = radius * Math.cos(theta) * Math.sin(phi) * (0.7 + Math.random() * 0.3);
-      const y = radius * Math.sin(theta) * Math.sin(phi) * (0.7 + Math.random() * 0.3);
-      const z = radius * Math.cos(phi) * (0.7 + Math.random() * 0.3);
+      const x = radius * Math.cos(theta) * Math.sin(phi) * (0.8 + Math.random() * 0.4);
+      const y = radius * Math.sin(theta) * Math.sin(phi) * (0.8 + Math.random() * 0.4);
+      const z = radius * Math.cos(phi) * (0.8 + Math.random() * 0.4);
 
       positions.push([x, y, z]);
     }
