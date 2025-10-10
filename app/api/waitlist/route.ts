@@ -15,6 +15,15 @@ export async function POST(request: NextRequest) {
     // Log to console
     console.log(`[Waitlist] New signup: ${email}`);
 
+    // Check if Supabase is configured
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      console.log(`[Waitlist] Supabase not configured, logging email: ${email}`);
+      return NextResponse.json(
+        { success: true, message: "Successfully joined the waitlist! (Supabase setup pending)" },
+        { status: 200 }
+      );
+    }
+
     // Get client IP
     const ipAddress = request.ip || request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
 
