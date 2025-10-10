@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readFile } from "fs/promises";
-import { existsSync } from "fs";
-import path from "path";
+import { supabase } from "@/lib/supabase";
 
 export async function GET(request: NextRequest) {
   try {
@@ -16,19 +14,28 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const emailsFile = path.join(process.cwd(), 'data', 'waitlist-emails.json');
-    
-    if (!existsSync(emailsFile)) {
-      return NextResponse.json([]);
+    // Fetch emails from Supabase
+    const { data: emails, error } = await supabase
+      .from('waitlist')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('[Admin] Supabase error:', error);
+      return NextResponse.json(
+        { error: "Failed to fetch emails" },
+        { status: 500 }
+      );
     }
 
-    const fileContent = await readFile(emailsFile, 'utf8');
-    const emails = JSON.parse(fileContent);
+    // Transform data to match expected format
+    const formattedEmails = emails?.map(email => ({
+      email: email.email,
+      timestamp: email.created_at,
+      ip: email.ip_address
+    })) || [];
 
-    // Sort by timestamp (newest first)
-    emails.sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-
-    return NextResponse.json(emails);
+    return NextResponse.json(formattedEmails);
   } catch (error) {
     console.error('[Admin] Error fetching emails:', error);
     return NextResponse.json(

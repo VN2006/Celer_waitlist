@@ -1,13 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, readFile, mkdir } from "fs/promises";
-import { existsSync } from "fs";
-import path from "path";
-
-interface EmailEntry {
-  email: string;
-  timestamp: string;
-  ip: string;
-}
+import { supabase } from "@/lib/supabase";
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,45 +15,44 @@ export async function POST(request: NextRequest) {
     // Log to console
     console.log(`[Waitlist] New signup: ${email}`);
 
-    // Save to file
-    const dataDir = path.join(process.cwd(), 'data');
-    const emailsFile = path.join(dataDir, 'waitlist-emails.json');
+    // Get client IP
+    const ipAddress = request.ip || request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
 
-    // Ensure data directory exists
-    if (!existsSync(dataDir)) {
-      await mkdir(dataDir, { recursive: true });
-    }
+    // Check if email already exists in Supabase
+    const { data: existingEmail } = await supabase
+      .from('waitlist')
+      .select('email')
+      .eq('email', email)
+      .single();
 
-    // Read existing emails
-    let emails: EmailEntry[] = [];
-    try {
-      if (existsSync(emailsFile)) {
-        const fileContent = await readFile(emailsFile, 'utf8');
-        emails = JSON.parse(fileContent);
-      }
-    } catch (error) {
-      console.error('Error reading emails file:', error);
-    }
-
-    // Add new email with timestamp
-    const newEntry: EmailEntry = {
-      email,
-      timestamp: new Date().toISOString(),
-      ip: request.ip || request.headers.get('x-forwarded-for') || 'unknown'
-    };
-
-    // Check if email already exists
-    const emailExists = emails.some(entry => entry.email === email);
-    if (!emailExists) {
-      emails.push(newEntry);
-      
-      // Save updated emails
-      await writeFile(emailsFile, JSON.stringify(emails, null, 2));
-      console.log(`[Waitlist] Email saved to file: ${email}`);
-    } else {
+    if (existingEmail) {
       console.log(`[Waitlist] Email already exists: ${email}`);
+      return NextResponse.json(
+        { success: true, message: "You're already on the waitlist!" },
+        { status: 200 }
+      );
     }
 
+    // Insert new email into Supabase
+    const { data, error } = await supabase
+      .from('waitlist')
+      .insert([
+        {
+          email: email,
+          ip_address: ipAddress
+        }
+      ])
+      .select();
+
+    if (error) {
+      console.error('[Waitlist] Supabase error:', error);
+      return NextResponse.json(
+        { error: "Failed to save email. Please try again." },
+        { status: 500 }
+      );
+    }
+
+    console.log(`[Waitlist] Email saved to Supabase: ${email}`);
     return NextResponse.json(
       { success: true, message: "Successfully joined the waitlist!" },
       { status: 200 }
