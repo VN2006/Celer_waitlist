@@ -1,0 +1,230 @@
+🧬 Lovable Prompt — “Celer” Landing Page (Biologically Inspired Neural Motion)
+
+Objective:
+Create a cinematic, minimal landing page for Celer, the world’s first end-to-end multiomics copilot.
+The site should combine the elegant simplicity of x.ai
+ with an organic, biologically inspired neuron-firing animation that symbolizes connected intelligence and scientific precision.
+
+⚙️ Tech Stack
+
+Framework: Next.js 14 (App Router) + TypeScript
+
+Styling: Tailwind CSS
+
+Animation: Framer Motion + React Three Fiber + Three.js
+
+Lighting Effects: Bloom, Depth of Field, Soft Shadows via @react-three/postprocessing
+
+Font: Inter (ExtraBold / Regular)
+
+Deployment: Vercel
+
+Goal: Lighthouse ≥ 95
+
+🎨 Visual Design
+
+Logo: /public/c-logo-3d-purple-black-2048.png (use in header + favicon + hover glow)
+
+Palette:
+
+Background: #0B0F19
+
+Primary: #7C3AED
+
+Accent: #A78BFA
+
+Text: #F9FAFB
+
+Muted Text: #CBD5E1
+
+Mood: Calm, scientific, elegant, alive.
+
+Motion: Slow, organic, non-repetitive activations — realistic biological rhythm.
+
+🧠 Hero Section — “The Living Network”
+
+Headline:
+
+“Celer — The world’s first end-to-end multiomics copilot.”
+
+Subheadline:
+
+“Pull, analyze, and visualize complex biological data — all in one intelligent platform.”
+
+Buttons:
+
+Join the MVP Waitlist (primary CTA)
+
+See How It Works (anchor scroll)
+
+Background Animation (React Three Fiber)
+
+Use a 3D neuron-firing network as the background:
+
+~80–100 nodes (spheres) connected by curved filaments (Bezier lines).
+
+Each node emits a soft pulse of light that diffuses outward using a Gaussian bloom effect.
+
+Firing sequence: slow, staggered activations (every 1–2 seconds), with slight randomness.
+
+Occasional synchronized “bursts” across multiple nodes to simulate integration events.
+
+Materials:
+
+Nodes → MeshStandardMaterial (emissive purple #7C3AED)
+
+Filaments → LineBasicMaterial (low opacity, glowing edges)
+
+Lighting setup:
+
+AmbientLight: low intensity (0.2)
+
+PointLight: centered on camera, soft falloff
+
+Bloom effect: strength 1.5, radius 0.4, threshold 0.2
+
+Depth of Field: focus at network center
+
+Camera Motion:
+
+Use OrbitControls (autoRotate = true, speed = 0.3, dampingFactor = 0.1)
+
+Subtle parallax tilt on mouse movement.
+
+Performance:
+
+Use useFrame to randomize node activations.
+
+Suspend re-renders with r3f/drei's Instances for batching.
+
+Fallback for prefers-reduced-motion: static SVG web with faint violet glow.
+
+(The effect should feel like fluorescent neurons gently lighting up — realistic calcium imaging energy rather than sci-fi speed.)
+
+🧬 About Celer – End-to-End Multiomics Platform
+
+Celer is an AI-powered, agentic SaaS platform that radically simplifies multiomics data analysis.
+It automatically fetches datasets from repositories like GEO, PRIDE, and Metabolomics Workbench, transforms them into clean, analysis-ready formats, runs standardized pipelines, and delivers interactive visualizations — enabling researchers to move from raw data to discovery in hours.
+
+Subheadline:
+
+The Jarvis for Biology.
+
+⚙️ How It Works (Animated 3-Step Flow)
+
+3 horizontally aligned cards with animated linking glow (Framer Motion):
+
+Pull Data
+ Auto-fetch omics datasets (GEO, PRIDE, or uploads).
+
+Analyze Data
+ Agentic AI runs explainable workflows — DGE, proteomics, meta-analysis.
+
+Visualize Insights
+ Generate interpretable plots, tables, and downloadable CSVs.
+
+(Loop a soft violet pulse moving between cards 1→2→3.)
+
+🎯 Mission & Vision
+
+Mission:
+
+“To accelerate biological discovery by removing friction from data transformation and empowering researchers with intelligent, interpretable, and customizable agentic workflows.”
+
+Vision:
+
+“To become the operating system for biological data — a voice-driven AI assistant in every lab enabling faster, better, and more accessible scientific breakthroughs.”
+
+(Use fade-up on scroll with slight blur-in easing.)
+
+🧬 Institution Logo Marquee
+
+Full-width auto-scrolling bar (pause on hover):
+Harvard | Yale | Duke | UNC Chapel Hill | Cornell | NYU Langone | Bascom Palmer Eye Institute
+
+Logos grayscale → color on hover
+
+Smooth infinite scroll using Framer Motion useAnimationFrame
+
+Include accessible aria-labels for all logos.
+
+✉️ Join the Waitlist
+
+CTA panel with soft spotlight glow.
+
+Headline:
+
+“Be among the first to experience Celer.”
+
+Subheadline:
+
+“Our MVP launches soon — join the waitlist for early access.”
+
+Form:
+
+Single-line email input
+
+POST /api/waitlist → success toast “You’re on the list!”
+
+Small text: “We respect your inbox.”
+
+👥 Founding Team
+
+“Celer was founded by an interdisciplinary team from Harvard, Yale, Cornell, Duke, and NYU Stern — uniting AI, neuroscience, chemistry, and bioinformatics to accelerate discovery.”
+
+⚙️ Footer
+
+Left: © Celer {year}
+
+Center: “All logos used for illustrative purposes only.”
+
+Right: LinkedIn | GitHub | Email icons
+
+📁 Folder Structure
+/app/page.tsx
+/components/Header.tsx
+/components/Hero.tsx
+/components/NeuronNetwork.tsx
+/components/AboutCeler.tsx
+/components/HowItWorks.tsx
+/components/MissionVision.tsx
+/components/LogoMarquee.tsx
+/components/WaitlistForm.tsx
+/components/Footer.tsx
+/public/c-logo-3d-purple-black-2048.png
+/public/logos/[harvard|yale|duke|unc|cornell|nyu|bascom-palmer].svg
+
+✅ Acceptance Criteria
+
+Realistic, biologically inspired neuron-firing animation (soft diffusion, slow rhythm)
+
+Includes Celer’s 3D purple “C” logo
+
+Uses “raw data to discovery in hours” exact phrase
+
+Sections: Hero | About | How It Works | Mission & Vision | Logo Marquee | Waitlist | Footer
+
+Fully responsive + accessible
+
+Functional /api/waitlist POST
+
+Lighting and bloom effects create a subtle “fluorescent microscope” feel
+
+Deployable on Vercel (fast build, no heavy dependencies)
+
+Now generate the complete codebase.
+Make sure the hero’s React Three Fiber canvas uses:
+
+<Canvas camera={{ position: [0, 0, 8], fov: 55 }} shadows>
+  <ambientLight intensity={0.2} />
+  <pointLight position={[0, 0, 4]} intensity={1.5} />
+  <EffectComposer>
+    <Bloom intensity={1.5} luminanceThreshold={0.2} luminanceSmoothing={0.3} />
+    <DepthOfField focusDistance={0.01} focalLength={0.03} bokehScale={2} />
+  </EffectComposer>
+</Canvas>
+
+
+Use Framer Motion for smooth content entry animations and OrbitControls for slow network drift.
+
+The finished product should feel like an intelligent, living organism — quiet, analytical, and alive.
