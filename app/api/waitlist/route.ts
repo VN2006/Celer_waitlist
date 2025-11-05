@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { supabase, supabaseAdmin } from "@/lib/supabase";
+
+// Force dynamic rendering (API routes with request data should be dynamic)
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,8 +18,11 @@ export async function POST(request: NextRequest) {
     // Log to console
     console.log(`[Waitlist] New signup: ${email}`);
 
-    // Check if Supabase is configured
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    // Use admin client (service role) to bypass RLS, or fall back to regular client
+    // Service role key bypasses RLS which is appropriate for server-side API routes
+    const client = supabaseAdmin || supabase;
+
+    if (!client) {
       console.log(`[Waitlist] Supabase not configured, logging email: ${email}`);
       return NextResponse.json(
         { success: true, message: "Successfully joined the waitlist! (Supabase setup pending)" },
@@ -27,27 +33,13 @@ export async function POST(request: NextRequest) {
     // Get client IP
     const ipAddress = request.ip || request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
 
-    // Check if email already exists in Supabase
-    const { data: existingEmail } = await supabase
-      .from('waitlist')
-      .select('email')
-      .eq('email', email)
-      .single();
-
-    if (existingEmail) {
-      console.log(`[Waitlist] Email already exists: ${email}`);
-      return NextResponse.json(
-        { success: true, message: "You're already on the waitlist!" },
-        { status: 200 }
-      );
-    }
-
-    // Insert new email into Supabase
-    const { data, error } = await supabase
+    // Try to insert email into Supabase
+    // The UNIQUE constraint on email will handle duplicates
+    const { data, error } = await client
       .from('waitlist')
       .insert([
         {
-          email: email,
+          email: email.toLowerCase().trim(), // Normalize email
           ip_address: ipAddress
         }
       ])
@@ -55,8 +47,20 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       console.error('[Waitlist] Supabase error:', error);
+      console.error('[Waitlist] Error code:', error.code);
+      console.error('[Waitlist] Error message:', error.message);
+      console.error('[Waitlist] Error details:', error.details);
+      
+      // Check if it's a duplicate email error
+      if (error.code === '23505' || error.message?.includes('duplicate') || error.message?.includes('unique')) {
+        return NextResponse.json(
+          { success: true, message: "You're already on the waitlist!" },
+          { status: 200 }
+        );
+      }
+      
       return NextResponse.json(
-        { error: "Failed to save email. Please try again." },
+        { error: `Failed to save email: ${error.message || 'Unknown error'}` },
         { status: 500 }
       );
     }

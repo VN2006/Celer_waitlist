@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { supabase, supabaseAdmin } from "@/lib/supabase";
+
+// Force dynamic rendering (API routes with headers/request should be dynamic)
+export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   try {
@@ -14,14 +17,17 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Use admin client if available (bypasses RLS), otherwise fall back to regular client
+    const adminClient = supabaseAdmin || supabase;
+
     // Check if Supabase is configured
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    if (!adminClient) {
       console.log('[Admin] Supabase not configured, returning empty array');
       return NextResponse.json([]);
     }
 
     // Fetch emails from Supabase
-    const { data: emails, error } = await supabase
+    const { data: emails, error } = await adminClient
       .from('waitlist')
       .select('*')
       .order('created_at', { ascending: false });
