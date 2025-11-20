@@ -21,13 +21,11 @@ export default function AboutCeler() {
             End-to-End Multiomics Platform
           </h2>
           <p className="text-xl text-textMuted mb-4 max-w-4xl mx-auto leading-relaxed">
-            Celer is an AI-powered, agentic SaaS platform that radically simplifies multiomics data analysis.
+            Celer is an AI-powered, agentic platform that radically simplifies multiomics data analysis.
             It automatically fetches datasets from repositories like GEO, PRIDE, and Metabolomics Workbench,
-            transforms them into clean, analysis-ready formats, runs standardized pipelines, and delivers
-            interactive visualizations, enabling researchers to move from{" "}
-            <span className="text-primary font-bold">raw data to discovery in hours</span>.
+            transforms them into clean, analysis-ready formats, runs standardized pipelines, enabling researchers to move from{" "}
+            <span className="text-primary font-bold">raw data to discovery in minutes</span>.
           </p>
-          <p className="text-2xl font-bold text-accent mt-8">The Jarvis for Biology.</p>
         </motion.div>
       </div>
     </section>
