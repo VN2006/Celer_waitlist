@@ -20,7 +20,7 @@ export default function Hero() {
           </span>
           <span className="text-textPrimary"> — </span>
           <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
-            The world's first end-to-end multiomics copilot.
+            The world's first end-to-end multiomics platform.
           </span>
         </motion.h1>
         <motion.p
@@ -30,7 +30,7 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="text-xl md:text-2xl text-textMuted mb-10 max-w-3xl mx-auto"
         >
-          Pull, analyze, and visualize complex biological data — all in one intelligent platform.
+          Pull and analyze complex biological data, all in one intelligent platform.
         </motion.p>
         <motion.div
           initial={{ opacity: 0, y: 30 }}
