@@ -38,7 +38,7 @@ export default function MissionVision() {
         >
           <h3 className="text-3xl font-bold text-primary mb-4">Vision</h3>
           <p className="text-xl text-textMuted leading-relaxed">
-            "To become the operating system for biological data — a voice-driven AI assistant in every lab
+            "To become the operating system for biological data, a voice-driven AI assistant in every lab
             enabling faster, better, and more accessible scientific breakthroughs."
           </p>
         </motion.div>
