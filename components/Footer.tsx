@@ -8,9 +8,6 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <p className="text-textMuted text-sm">© Celer {currentYear}</p>
-          <p className="text-textMuted/70 text-xs text-center">
-            All logos used for illustrative purposes only.
-          </p>
           <div className="flex items-center gap-6">
             <a
               href="https://www.linkedin.com"
