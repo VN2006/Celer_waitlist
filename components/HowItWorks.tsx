@@ -8,17 +8,17 @@ const steps = [
   {
     number: "1",
     title: "Pull Data",
-    description: "Auto-fetch omics datasets (GEO, PRIDE, or uploads).",
+    description: "Auto-fetch omics datasets from every public repository in the world (GEO, PRIDE, or uploads).",
   },
   {
     number: "2",
-    title: "Analyze Data",
-    description: "Agentic AI runs explainable workflows — DGE, proteomics, meta-analysis.",
+    title: "Format Data",
+    description: "Formats data into a universal format for any omics analysis tool",
   },
   {
     number: "3",
-    title: "Visualize Insights",
-    description: "Generate interpretable plots, tables, and downloadable CSVs.",
+    title: "Analyze Data",
+    description: "Agentic AI runs explainable analysis: proteomics, transcriptomics, metabolomics.",
   },
 ];
 
