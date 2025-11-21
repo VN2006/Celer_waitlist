@@ -18,7 +18,7 @@ export default function AboutCeler() {
           className="text-center"
         >
           <h2 className="text-4xl md:text-5xl font-extrabold text-textPrimary mb-6">
-            End-to-End Multiomics Platform
+            World's First AI End-to-End Multiomics Platform
           </h2>
           <p className="text-xl text-textMuted mb-4 max-w-4xl mx-auto leading-relaxed">
             Celer is an AI-powered, agentic platform that radically simplifies multiomics data analysis.
