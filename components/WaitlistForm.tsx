@@ -4,12 +4,32 @@ import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef, useState } from "react";
 
+type FormStatus = "idle" | "loading" | "success" | "error";
+
+const INITIAL_FORM_STATE = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  phone: "",
+  organizationName: "",
+  organizationSize: "",
+  teamChallenges: "",
+};
+
 export default function WaitlistForm() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
-  const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [formData, setFormData] = useState(INITIAL_FORM_STATE);
+  const [status, setStatus] = useState<FormStatus>("idle");
   const [message, setMessage] = useState("");
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,7 +41,7 @@ export default function WaitlistForm() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify(formData),
       });
 
       const data = await response.json();
@@ -29,7 +49,7 @@ export default function WaitlistForm() {
       if (response.ok) {
         setStatus("success");
         setMessage("You're on the list!");
-        setEmail("");
+        setFormData(INITIAL_FORM_STATE);
       } else {
         setStatus("error");
         setMessage(data.error || "Something went wrong");
@@ -66,19 +86,76 @@ export default function WaitlistForm() {
             <p className="text-xl text-textMuted mb-8">
               Our MVP launches soon — join the waitlist for early access.
             </p>
-            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 max-w-xl mx-auto">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                required
-                className="flex-1 px-6 py-4 bg-background/50 border border-primary/30 rounded-lg text-textPrimary placeholder-textMuted/50 focus:outline-none focus:border-primary transition-colors"
+            <form onSubmit={handleSubmit} className="space-y-4 max-w-2xl mx-auto text-left">
+              <div className="grid gap-4 md:grid-cols-2">
+                <input
+                  type="text"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  placeholder="First name"
+                  required
+                  className="px-6 py-4 bg-background/50 border border-primary/30 rounded-lg text-textPrimary placeholder-textMuted/50 focus:outline-none focus:border-primary transition-colors"
+                />
+                <input
+                  type="text"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  placeholder="Last name"
+                  required
+                  className="px-6 py-4 bg-background/50 border border-primary/30 rounded-lg text-textPrimary placeholder-textMuted/50 focus:outline-none focus:border-primary transition-colors"
+                />
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="Work email"
+                  required
+                  className="px-6 py-4 bg-background/50 border border-primary/30 rounded-lg text-textPrimary placeholder-textMuted/50 focus:outline-none focus:border-primary transition-colors"
+                />
+                <input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  placeholder="Phone number"
+                  className="px-6 py-4 bg-background/50 border border-primary/30 rounded-lg text-textPrimary placeholder-textMuted/50 focus:outline-none focus:border-primary transition-colors"
+                />
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <input
+                  type="text"
+                  name="organizationName"
+                  value={formData.organizationName}
+                  onChange={handleChange}
+                  placeholder="Organization name"
+                  className="px-6 py-4 bg-background/50 border border-primary/30 rounded-lg text-textPrimary placeholder-textMuted/50 focus:outline-none focus:border-primary transition-colors"
+                />
+                <input
+                  type="text"
+                  name="organizationSize"
+                  value={formData.organizationSize}
+                  onChange={handleChange}
+                  placeholder="Organization size (e.g. 25 engineers)"
+                  className="px-6 py-4 bg-background/50 border border-primary/30 rounded-lg text-textPrimary placeholder-textMuted/50 focus:outline-none focus:border-primary transition-colors"
+                />
+              </div>
+              <textarea
+                name="teamChallenges"
+                value={formData.teamChallenges}
+                onChange={handleChange}
+                placeholder="What problems is your team currently facing?"
+                rows={4}
+                className="w-full px-6 py-4 bg-background/50 border border-primary/30 rounded-lg text-textPrimary placeholder-textMuted/50 focus:outline-none focus:border-primary transition-colors resize-none"
               />
               <button
                 type="submit"
                 disabled={status === "loading"}
-                className="px-8 py-4 bg-primary hover:bg-primary/90 text-white font-bold rounded-lg transition-all shadow-lg shadow-primary/30 hover:shadow-primary/50 disabled:opacity-50"
+                className="w-full px-8 py-4 bg-primary hover:bg-primary/90 text-white font-bold rounded-lg transition-all shadow-lg shadow-primary/30 hover:shadow-primary/50 disabled:opacity-50"
               >
                 {status === "loading" ? "Joining..." : "Join Waitlist"}
               </button>

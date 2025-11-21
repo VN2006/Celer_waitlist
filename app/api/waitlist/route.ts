@@ -4,13 +4,32 @@ import { supabase, supabaseAdmin } from "@/lib/supabase";
 // Force dynamic rendering (API routes with request data should be dynamic)
 export const dynamic = 'force-dynamic';
 
+interface WaitlistPayload {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phone?: string;
+  organizationName?: string;
+  organizationSize?: string;
+  teamChallenges?: string;
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const { email } = await request.json();
+    const body: WaitlistPayload = await request.json();
+    const {
+      email,
+      firstName,
+      lastName,
+      phone,
+      organizationName,
+      organizationSize,
+      teamChallenges,
+    } = body;
 
-    if (!email || !email.includes("@")) {
+    if (!email || !email.includes("@") || !firstName?.trim() || !lastName?.trim()) {
       return NextResponse.json(
-        { error: "Please provide a valid email address" },
+        { error: "Please provide a first name, last name, and valid email address" },
         { status: 400 }
       );
     }
@@ -33,16 +52,22 @@ export async function POST(request: NextRequest) {
     // Get client IP
     const ipAddress = request.ip || request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
 
+    const payload = {
+      email: email.toLowerCase().trim(),
+      first_name: firstName.trim(),
+      last_name: lastName.trim(),
+      phone: phone?.trim() || null,
+      organization_name: organizationName?.trim() || null,
+      organization_size: organizationSize?.trim() || null,
+      team_challenges: teamChallenges?.trim() || null,
+      ip_address: ipAddress,
+    };
+
     // Try to insert email into Supabase
     // The UNIQUE constraint on email will handle duplicates
     const { data, error } = await client
       .from('waitlist')
-      .insert([
-        {
-          email: email.toLowerCase().trim(), // Normalize email
-          ip_address: ipAddress
-        }
-      ])
+      .insert([payload])
       .select();
 
     if (error) {

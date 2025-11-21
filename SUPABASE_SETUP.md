@@ -30,6 +30,12 @@
 CREATE TABLE IF NOT EXISTS waitlist (
   id BIGSERIAL PRIMARY KEY,
   email TEXT UNIQUE NOT NULL,
+  first_name TEXT NOT NULL,
+  last_name TEXT NOT NULL,
+  phone TEXT,
+  organization_name TEXT,
+  organization_size TEXT,
+  team_challenges TEXT,
   ip_address TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -51,6 +57,27 @@ CREATE POLICY "Allow public inserts" ON waitlist
 ```
 
 4. Click **Run** to execute the SQL
+
+> **Already have the table?** Run this SQL to add the new columns:
+>
+> ```sql
+> ALTER TABLE waitlist
+>   ADD COLUMN IF NOT EXISTS first_name TEXT,
+>   ADD COLUMN IF NOT EXISTS last_name TEXT,
+>   ADD COLUMN IF NOT EXISTS phone TEXT,
+>   ADD COLUMN IF NOT EXISTS organization_name TEXT,
+>   ADD COLUMN IF NOT EXISTS organization_size TEXT,
+>   ADD COLUMN IF NOT EXISTS team_challenges TEXT;
+>
+> UPDATE waitlist
+> SET first_name = COALESCE(first_name, 'Unknown'),
+>     last_name = COALESCE(last_name, 'Unknown')
+> WHERE first_name IS NULL OR last_name IS NULL;
+>
+> ALTER TABLE waitlist
+>   ALTER COLUMN first_name SET NOT NULL,
+>   ALTER COLUMN last_name SET NOT NULL;
+> ```
 
 ## Step 4: Configure Environment Variables
 

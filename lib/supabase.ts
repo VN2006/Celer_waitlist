@@ -19,6 +19,12 @@ export const supabaseAdmin = supabaseUrl && supabaseServiceRoleKey
 export interface EmailEntry {
   id?: number
   email: string
+  first_name?: string
+  last_name?: string
+  phone?: string | null
+  organization_name?: string | null
+  organization_size?: string | null
+  team_challenges?: string | null
   created_at?: string
   ip_address?: string
 }

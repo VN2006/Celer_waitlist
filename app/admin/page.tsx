@@ -4,6 +4,12 @@ import { useState, useEffect } from "react";
 
 interface EmailEntry {
   email: string;
+  firstName: string;
+  lastName: string;
+  phone?: string | null;
+  organizationName?: string | null;
+  organizationSize?: string | null;
+  teamChallenges?: string | null;
   timestamp: string;
   ip: string;
 }
@@ -71,16 +77,42 @@ export default function AdminPage() {
   };
 
   const downloadCSV = () => {
-    const csvContent = [
-      'Email,Timestamp,IP Address',
-      ...emails.map(entry => `${entry.email},${entry.timestamp},${entry.ip}`)
-    ].join('\n');
+    const headers = [
+      "First Name",
+      "Last Name",
+      "Email",
+      "Phone",
+      "Organization Name",
+      "Organization Size",
+      "Team Challenges",
+      "Timestamp",
+      "IP Address",
+    ];
 
-    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const csvContent = [
+      headers.join(","),
+      ...emails.map((entry) =>
+        [
+          entry.firstName || "",
+          entry.lastName || "",
+          entry.email,
+          entry.phone || "",
+          entry.organizationName || "",
+          entry.organizationSize || "",
+          entry.teamChallenges?.replace(/(\r\n|\n|\r)/gm, " ") || "",
+          entry.timestamp,
+          entry.ip || "",
+        ]
+          .map((value) => `"${value.replace(/"/g, '""')}"`)
+          .join(",")
+      ),
+    ].join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = `celer-waitlist-${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `celer-waitlist-${new Date().toISOString().split("T")[0]}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
   };
@@ -156,36 +188,58 @@ export default function AdminPage() {
 
         <div className="bg-primary/10 rounded-lg p-6 mb-6">
           <h2 className="text-xl font-semibold mb-2">Statistics</h2>
-          <p className="text-textMuted">Total signups: <span className="font-bold text-primary">{emails.length}</span></p>
+          <p className="text-textMuted">
+            Total signups: <span className="font-bold text-primary">{emails.length}</span>
+          </p>
         </div>
 
         <div className="bg-background/50 border border-primary/20 rounded-lg overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="w-full text-left">
               <thead className="bg-primary/10">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-textMuted uppercase tracking-wider">
-                    Email
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-textMuted uppercase tracking-wider">
-                    Date & Time
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-textMuted uppercase tracking-wider">
-                    IP Address
-                  </th>
+                  {["Name", "Email", "Phone", "Organization", "Org Size", "Team Challenges", "Date & Time", "IP Address"].map(
+                    (heading) => (
+                      <th
+                        key={heading}
+                        className="px-6 py-3 text-xs font-medium text-textMuted uppercase tracking-wider"
+                      >
+                        {heading}
+                      </th>
+                    )
+                  )}
                 </tr>
               </thead>
               <tbody className="divide-y divide-primary/10">
                 {emails.map((entry, index) => (
-                  <tr key={index} className="hover:bg-primary/5">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-textPrimary">
-                      {entry.email}
+                  <tr key={index} className="hover:bg-primary/5 align-top">
+                    <td className="px-6 py-4 text-sm text-textPrimary">
+                      <p className="font-semibold">{`${entry.firstName} ${entry.lastName}`.trim()}</p>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-textMuted">
+                    <td className="px-6 py-4 text-sm text-textMuted">
+                      <p>{entry.email}</p>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-textMuted">
+                      {entry.phone || "—"}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-textMuted">
+                      {entry.organizationName || "—"}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-textMuted">
+                      {entry.organizationSize || "—"}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-textMuted max-w-xs">
+                      {entry.teamChallenges ? (
+                        <p className="whitespace-pre-line">{entry.teamChallenges}</p>
+                      ) : (
+                        "—"
+                      )}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-textMuted whitespace-nowrap">
                       {new Date(entry.timestamp).toLocaleString()}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-textMuted">
-                      {entry.ip}
+                    <td className="px-6 py-4 text-sm text-textMuted whitespace-nowrap">
+                      {entry.ip || "—"}
                     </td>
                   </tr>
                 ))}
