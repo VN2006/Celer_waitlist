@@ -18,9 +18,9 @@ export default function Hero() {
           <span className="bg-gradient-to-r from-white via-purple-200 to-white bg-clip-text text-transparent">
             Celer
           </span>
-          <span className="text-textPrimary"> — </span>
+          <span className="text-textPrimary"> : </span>
           <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
-            The world's first end-to-end multiomics platform.
+            Accelerating Multiomics Discovery.
           </span>
         </motion.h1>
         <motion.p
